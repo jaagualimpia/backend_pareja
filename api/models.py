@@ -5,13 +5,13 @@ from django.db import models
 class Order(models.Model):
     date = models.DateTimeField()
     total = models.FloatField()
-    status = models.CharField(50)
-    address = models.CharField(75)
+    status = models.CharField(max_length=50)
+    address = models.CharField(max_length=75)
 
 class Product(models.Model):
-    name = models.CharField(50)
+    name = models.CharField(max_length=50)
     price = models.FloatField()
-    description = models.CharField(50)
+    description = models.CharField(max_length=50)
 
 class OrderToProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
