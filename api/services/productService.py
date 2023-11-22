@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseServerError, JsonResponse
-from ..repositories.productRepository import getAllProducts, getProductById, createProduct, updateProduct, deleteProductById
+from ..repositories.productRepository import addProductToOrder, getAllProducts, getProductById, createProduct, updateProduct, deleteProductById
 from django.forms.models import model_to_dict
 
 
@@ -9,6 +9,12 @@ def getAllProductsService():
     except Exception as e:
         return HttpResponseServerError(e)
     
+def addProductToOrderService(product, quantity, order_id):
+    try:
+        addProductToOrder(order_id, product, quantity["quantity"])
+    except Exception as e:
+        return HttpResponseServerError(e) 
+
 def getProductByIdService(id):
     try:
         product = model_to_dict(getProductById(id))

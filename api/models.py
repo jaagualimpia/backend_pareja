@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Order(models.Model):
+    owner = models.CharField(max_length=50, default="Anonymous client")
     date = models.DateTimeField()
     total = models.FloatField()
     status = models.CharField(max_length=50)
@@ -16,3 +17,4 @@ class Product(models.Model):
 class OrderToProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)

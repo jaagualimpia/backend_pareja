@@ -18,11 +18,11 @@ def getOrderByIdService(id):
     
 def createOrderService(order):
     try:
-        createOrder(order)
-        return HttpResponse(status=200)
+        final_order = createOrder(order)
+        return model_to_dict(final_order)
     
     except Exception as e:
-        return HttpResponseServerError(e)
+        print(e)
     
 def updateOrderService(order):
     try:

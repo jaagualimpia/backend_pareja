@@ -1,17 +1,19 @@
 from django.http import HttpResponse, JsonResponse
 from .services.orderService import getAllOrdersService, createOrderService, getOrderByIdService, updateOrderService, deleteOrderByIdService
-from .services.productService import getAllProductsService, createProductService, getProductByIdService, updateProductService, deleteProductByIdService
-from .forms import OrderForm, ProductForm
+from .services.productService import addProductToOrderService, getAllProductsService, createProductService, getProductByIdService, updateProductService, deleteProductByIdService
+from .forms import OrderForm, OrderToProductForm, ProductForm
 from django.views.decorators.csrf import csrf_exempt
 import json
 
 @csrf_exempt
 def orders(request):
+    request
     if request.method == 'POST':
-        form = OrderForm(json.loads(request.body))
-
+        body = json.loads(request.body.decode('utf-8'))
+        form = OrderForm(body)
+  
         if form.is_valid():
-            return createOrderService(form.cleaned_data)
+            return JsonResponse(createOrderService(form.cleaned_data), status=201, safe=False)
         else:
             return HttpResponse("Something really bad happened in your request", status=400)
 
@@ -32,12 +34,17 @@ def order(request, order_id=0):
 @csrf_exempt
 def products(request):
     if request.method == 'POST':
-        form = ProductForm(json.loads(request.body))
-
-        if form.is_valid():
-            return createProductService(form.cleaned_data)
+        body = json.loads(request.body.decode('utf-8'))
+                  
+        for product in body["products"]:
+            quantity_form = OrderToProductForm(product)
+            product_form = ProductForm(product["product"])
+            
+            if product_form.is_valid() and quantity_form.is_valid():
+                addProductToOrderService(product_form.cleaned_data, quantity_form.cleaned_data, body["OwnerId"])
+            return JsonResponse({"state": True}, status=201, safe=False)
         else:
-            return HttpResponse("Something really happened bad in your request", status=400)
+            return HttpResponse("Something really bad happened in your request", status=400)
 
     return getAllProductsService()
 
